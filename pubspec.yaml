@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  rxdart: ^0.26.0
   #flutter_web_plugins:
   #  sdk: flutter
 

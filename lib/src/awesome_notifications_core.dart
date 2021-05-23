@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:rxdart/rxdart.dart';
+
 // In order to *not* need this ignore, consider extracting the "web" version
 // of your plugin as a separate package, instead of inlining it in the same
 // package as the core of your plugin.
@@ -50,20 +50,22 @@ class AwesomeNotifications {
   //   StreamController<String>();
 
   final StreamController<ReceivedNotification>
-      // ignore: close_sinks
-      _createdSubject = StreamController<ReceivedNotification>();
+  // ignore: close_sinks
+  _createdSubject = StreamController<ReceivedNotification>();
 
   final StreamController<ReceivedNotification>
-      // ignore: close_sinks
-      _displayedSubject = StreamController<ReceivedNotification>();
-
-  final BehaviorSubject<ReceivedAction>
-      // ignore: close_sinks
-      _actionSubject = BehaviorSubject<ReceivedAction>();
+  // ignore: close_sinks
+  _displayedSubject = StreamController<ReceivedNotification>();
 
   final StreamController<ReceivedAction>
-      // ignore: close_sinks
-      _dismissedSubject = StreamController<ReceivedAction>();
+  // ignore: close_sinks
+  _actionSubject = StreamController<ReceivedAction>.broadcast();
+
+  final StreamController<ReceivedAction>
+  // ignore: close_sinks
+  _dismissedSubject = StreamController<ReceivedAction>();
+
+  var _actionSubjectBroadcast;
 
   /// STREAM METHODS *********************************************
 
@@ -140,7 +142,7 @@ class AwesomeNotifications {
   AwesomeNotifications.private(MethodChannel channel) : _channel = channel;
 
   static final AwesomeNotifications _instance =
-      AwesomeNotifications.private(const MethodChannel(CHANNEL_FLUTTER_PLUGIN));
+  AwesomeNotifications.private(const MethodChannel(CHANNEL_FLUTTER_PLUGIN));
 
   /// INITIALIZING METHODS *********************************************
 
@@ -166,7 +168,7 @@ class AwesomeNotifications {
       if (!AssertUtils.isNullOrEmptyOrInvalid(defaultIcon, String)) {
         // To set a icon on top of notification, is mandatory to user a native resource
         assert(
-            BitmapUtils().getMediaSource(defaultIcon!) == MediaSource.Resource);
+        BitmapUtils().getMediaSource(defaultIcon!) == MediaSource.Resource);
         defaultIconPath = defaultIcon;
       }
     }
@@ -180,7 +182,7 @@ class AwesomeNotifications {
     localTimeZoneIdentifier = await _channel
         .invokeMethod(CHANNEL_METHOD_GET_LOCAL_TIMEZONE_IDENTIFIER);
     utcTimeZoneIdentifier =
-        await _channel.invokeMethod(CHANNEL_METHOD_GET_UTC_TIMEZONE_IDENTIFIER);
+    await _channel.invokeMethod(CHANNEL_METHOD_GET_UTC_TIMEZONE_IDENTIFIER);
 
     return result;
   }
@@ -201,10 +203,10 @@ class AwesomeNotifications {
     Map<String, dynamic> arguments = Map<String, dynamic>.from(call.arguments);
 
     switch (call.method) {
-      // case CHANNEL_METHOD_NEW_FCM_TOKEN:
-      //   final String token = call.arguments;
-      //   _tokenStreamController.add(token);
-      //   return;
+    // case CHANNEL_METHOD_NEW_FCM_TOKEN:
+    //   final String token = call.arguments;
+    //   _tokenStreamController.add(token);
+    //   return;
 
       case CHANNEL_METHOD_NOTIFICATION_CREATED:
         _createdSubject.sink.add(ReceivedNotification().fromMap(arguments));
@@ -252,9 +254,9 @@ class AwesomeNotifications {
       final bool wasCreated = await _channel.invokeMethod(
           CHANNEL_METHOD_CREATE_NOTIFICATION,
           PushNotification(
-                  content: content,
-                  schedule: schedule,
-                  actionButtons: actionButtons)
+              content: content,
+              schedule: schedule,
+              actionButtons: actionButtons)
               .toMap());
 
       return wasCreated;
@@ -297,14 +299,14 @@ class AwesomeNotifications {
   /// Check if the notifications are permitted
   Future<bool> isNotificationAllowed() async {
     final bool isAllowed =
-        await _channel.invokeMethod(CHANNEL_METHOD_IS_NOTIFICATION_ALLOWED);
+    await _channel.invokeMethod(CHANNEL_METHOD_IS_NOTIFICATION_ALLOWED);
     return isAllowed;
   }
 
   /// Prompts the user to enabled notifications
   Future<bool> requestPermissionToSendNotifications() async {
     final bool isAllowed =
-        await _channel.invokeMethod(CHANNEL_METHOD_REQUEST_NOTIFICATIONS);
+    await _channel.invokeMethod(CHANNEL_METHOD_REQUEST_NOTIFICATIONS);
     return isAllowed;
   }
 
@@ -312,13 +314,13 @@ class AwesomeNotifications {
   Future<List<PushNotification>> listScheduledNotifications() async {
     List<PushNotification> scheduledNotifications = [];
     List<Object>? returned =
-        await _channel.invokeListMethod(CHANNEL_METHOD_LIST_ALL_SCHEDULES);
+    await _channel.invokeListMethod(CHANNEL_METHOD_LIST_ALL_SCHEDULES);
     if (returned != null) {
       for (Object object in returned) {
         if (object is Map) {
           try {
             PushNotification pushNotification =
-                PushNotification().fromMap(Map<String, dynamic>.from(object))!;
+            PushNotification().fromMap(Map<String, dynamic>.from(object))!;
             scheduledNotifications.add(pushNotification);
           } catch (e) {
             return [];
@@ -332,9 +334,9 @@ class AwesomeNotifications {
   /// Set a new notification channel or updates if already exists
   /// [forceUpdate]: completely updates the channel on Android Oreo and above, but cancels all current notifications.
   Future<void> setChannel(
-    NotificationChannel notificationChannel, {
-    bool forceUpdate = false,
-  }) async {
+      NotificationChannel notificationChannel, {
+        bool forceUpdate = false,
+      }) async {
     Map<String, dynamic> parameters = notificationChannel.toMap();
     parameters.addAll({CHANNEL_FORCE_UPDATE: forceUpdate});
 
@@ -364,7 +366,7 @@ class AwesomeNotifications {
   /// Get badge counter (on iOS the amount is global)
   Future<int> getGlobalBadgeCounter() async {
     final int badgeCount =
-        await _channel.invokeMethod(CHANNEL_METHOD_GET_BADGE_COUNT);
+    await _channel.invokeMethod(CHANNEL_METHOD_GET_BADGE_COUNT);
     return badgeCount;
   }
 
@@ -375,12 +377,12 @@ class AwesomeNotifications {
 
   /// Get the next valid date for a notification schedule
   Future<DateTime?> getNextDate(
-    /// A valid Notification schedule model
-    NotificationSchedule schedule, {
+      /// A valid Notification schedule model
+      NotificationSchedule schedule, {
 
-    /// reference date to simulate a schedule in different time. If null, the reference date will be now
-    DateTime? fixedDate,
-  }) async {
+        /// reference date to simulate a schedule in different time. If null, the reference date will be now
+        DateTime? fixedDate,
+      }) async {
     fixedDate ??= DateTime.now().toUtc();
     Map parameters = {
       NOTIFICATION_INITIAL_FIXED_DATE: DateUtils.parseDateToString(fixedDate),
@@ -388,7 +390,7 @@ class AwesomeNotifications {
     };
 
     final String? nextDate =
-        await _channel.invokeMethod(CHANNEL_METHOD_GET_NEXT_DATE, parameters);
+    await _channel.invokeMethod(CHANNEL_METHOD_GET_NEXT_DATE, parameters);
 
     if (nextDate == null) return null;
 
@@ -398,7 +400,7 @@ class AwesomeNotifications {
   /// Get the current UTC time zone identifier
   Future<String> getUtcTimeZoneIdentifier() async {
     final String utcIdentifier =
-        await _channel.invokeMethod(CHANNEL_METHOD_GET_UTC_TIMEZONE_IDENTIFIER);
+    await _channel.invokeMethod(CHANNEL_METHOD_GET_UTC_TIMEZONE_IDENTIFIER);
     return utcIdentifier;
   }
 
