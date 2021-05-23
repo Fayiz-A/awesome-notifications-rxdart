@@ -189,10 +189,11 @@
     <state x="670" y="118" width="717" height="760" key="find.popup/0.25.1904.943@0.25.1904.943" timestamp="1620167419697" />
     <state x="661" y="301" width="723" height="550" key="find.popup/0.25.1920.943@0.25.1920.943" timestamp="1614978540238" />
     <state x="661" y="306" width="1078" height="560" key="find.popup/0.25.1920.959@0.25.1920.959" timestamp="1615153580889" />
-    <state x="936" y="172" width="672" height="676" key="search.everywhere.popup" timestamp="1619366376321">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state x="527" y="154" width="1005" height="517" key="search.everywhere.popup" timestamp="1621769361122">
+      <screen x="0" y="23" width="1440" height="795" />
     </state>
     <state x="936" y="172" width="672" height="676" key="search.everywhere.popup/0.0.2560.1040@0.0.2560.1040" timestamp="1619366376321" />
+    <state x="527" y="154" width="1005" height="517" key="search.everywhere.popup/0.23.1440.795@0.23.1440.795" timestamp="1621769361122" />
     <state x="690" y="338" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1614979209639">
       <screen x="0" y="25" width="1920" height="943" />
     </state>
