@@ -57,7 +57,7 @@ class AwesomeNotifications {
       // ignore: close_sinks
       _displayedSubject = StreamController<ReceivedNotification>();
 
-  final BehaviourSubject<ReceivedAction>
+  final BehaviorSubject<ReceivedAction>
       // ignore: close_sinks
       _actionSubject = BehaviorSubject<ReceivedAction>();
 
